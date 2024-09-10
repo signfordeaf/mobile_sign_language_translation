@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  signfordeaf:
+  mobile_sign_language_translation:
     path: ../
 
 

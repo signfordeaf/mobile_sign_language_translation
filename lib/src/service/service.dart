@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mobile_sign_language_translation/signfordeaf.dart';
+import 'package:mobile_sign_language_translation/mobile_sign_language_translation.dart';
 import 'package:mobile_sign_language_translation/src/model/sign_model.dart';
 import 'package:mobile_sign_language_translation/src/service/http_exception.dart';
 

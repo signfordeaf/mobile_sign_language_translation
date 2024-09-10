@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:signfordeaf/signfordeaf.dart';
+import 'package:mobile_sign_language_translation/mobile_sign_language_translation.dart';
 
 void main() {
   runApp(const MyApp());
