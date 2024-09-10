@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:signfordeaf/src/service/marquee_text.dart';
+import 'package:mobile_sign_language_translation/src/service/marquee_text.dart';
 import 'package:video_player/video_player.dart';
 
 class SignPanel extends StatefulWidget {

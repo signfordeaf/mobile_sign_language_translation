@@ -2,9 +2,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:signfordeaf/src/service/service.dart';
-import 'package:signfordeaf/src/signfordeaf_manager.dart';
-import 'package:signfordeaf/src/views/sign_panel.dart';
+import 'package:mobile_sign_language_translation/src/service/service.dart';
+import 'package:mobile_sign_language_translation/src/signfordeaf_manager.dart';
+import 'package:mobile_sign_language_translation/src/views/sign_panel.dart';
 import 'package:video_player/video_player.dart';
 
 // Enum for SignForDeaf states

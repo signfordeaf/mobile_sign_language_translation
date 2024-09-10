@@ -1,6 +1,7 @@
-name: signfordeaf
+name: mobile_sign_language_translation
 description: "Mobile Sign Language Translation Flutter Package."
 version: 1.0.0
+email: hello@signfordeaf.com
 homepage: https://github.com/signfordeaf/mobile_sign_language_translation
 repository: https://github.com/signfordeaf/mobile_sign_language_translation
 topic: 
