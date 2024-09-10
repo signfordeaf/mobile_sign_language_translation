@@ -1,7 +1,13 @@
 name: signfordeaf
-description: "A new Flutter package project."
-version: 0.0.1
-homepage:
+description: "Mobile Sign Language Translation Flutter Package."
+version: 1.0.0
+homepage: https://github.com/signfordeaf/mobile_sign_language_translation
+repository: https://github.com/signfordeaf/mobile_sign_language_translation
+topic: 
+  - sign language
+  - translation
+  - flutter
+  - mobile
 
 environment:
   sdk: ^3.5.0
