@@ -43,7 +43,7 @@ class _SignPanelState extends State<SignPanel> {
                     child: Image.asset(
                       'images/logo_kafa.png',
                       scale: 4,
-                      package: 'signfordeaf',
+                      package: 'mobile_sign_language_translation',
                     ),
                   ),
                   RichText(

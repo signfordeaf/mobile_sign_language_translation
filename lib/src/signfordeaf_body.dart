@@ -222,7 +222,7 @@ class _SignForDeafBodyState extends State<SignForDeafBody>
             Image.asset(
               'images/logo_head.png',
               scale: 3,
-              package: 'signfordeaf',
+              package: 'mobile_sign_language_translation',
             ),
             SizedBox(
               width: MediaQuery.of(context).size.height * 0.1,
@@ -274,7 +274,7 @@ class _SignForDeafBodyState extends State<SignForDeafBody>
             Image.asset(
               'images/logo_head.png',
               scale: 1.5,
-              package: 'signfordeaf',
+              package: 'mobile_sign_language_translation',
             ),
             Transform.translate(
               offset: Offset(0, MediaQuery.of(context).size.height * 0.1),

@@ -221,7 +221,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
             Image.asset(
               'images/logo_kafa.png',
               scale: 3,
-              package: 'signfordeaf',
+              package: 'mobile_sign_language_translation',
             ),
             SizedBox(
               width: MediaQuery.of(context).size.height * 0.1,
@@ -273,7 +273,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
             Image.asset(
               'images/logo_kafa.png',
               scale: 1.5,
-              package: 'signfordeaf',
+              package: 'mobile_sign_language_translation',
             ),
             Transform.translate(
               offset: Offset(0, MediaQuery.of(context).size.height * 0.1),
