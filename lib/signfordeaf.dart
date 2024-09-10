@@ -1,4 +1,4 @@
-library signfordeaf;
+library mobile_sign_language_translation;
 
 /// A Base class for sign language
 export 'src/signfordeaf_sign.dart';
