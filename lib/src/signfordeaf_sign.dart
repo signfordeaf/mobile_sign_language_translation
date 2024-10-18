@@ -79,7 +79,7 @@ class _SignForDeafState extends State<SignForDeaf>
   void _initializeVideoPlayer(String signVideoUrl) {
     try {
       _videoController = VideoPlayerController.networkUrl(
-        Uri.parse(signVideoUrl.replaceFirst('http', 'https')),
+        Uri.parse(signVideoUrl.replaceFirst('http:', 'https:')),
       )..addListener(() {
           if (_videoController.value.hasError) {
             if (videoPlayerErrorCount <= 3) {

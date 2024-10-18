@@ -57,8 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            const SignForDeafArea(
+              requestKey: 'YOUR_API_KEY',
+              requestUrl: 'YOUR_API_URL',
+              child: Text(
+                'You have pushed the button this many times:',
+              ),
             ),
             Text(
               '$_counter',
