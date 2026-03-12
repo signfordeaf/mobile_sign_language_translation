@@ -12,19 +12,15 @@ class SignForDeafArea extends StatefulWidget {
   /// Creates a const instance of [SignForDeafArea].
   final String? requestKey;
   final String? requestUrl;
+  final String? originUrl;
   final Widget? child;
-  const SignForDeafArea(
-      {super.key,
-      this.requestKey,
-      required this.requestUrl,
-      required this.child});
+  const SignForDeafArea({super.key, this.requestKey, required this.requestUrl, this.originUrl, required this.child});
 
   @override
   State<SignForDeafArea> createState() => _SignForDeafAreaState();
 }
 
-class _SignForDeafAreaState extends State<SignForDeafArea>
-    with SingleTickerProviderStateMixin {
+class _SignForDeafAreaState extends State<SignForDeafArea> with SingleTickerProviderStateMixin {
   Locale currentLocale = const Locale('tr');
   final SignForDeafManager _signForDeafManager = SignForDeafManager();
   late VideoPlayerController _videoController;
@@ -54,6 +50,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
     ));
     widget.requestKey != null ? _settingRequestKey() : null;
     widget.requestUrl != null ? _settingRequestUrl() : null;
+    widget.originUrl != null ? _settingOriginUrl() : null;
     _signForDeafState = SignForDeafState.initial;
     super.initState();
   }
@@ -70,6 +67,10 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
 
   void _settingRequestUrl() {
     _signForDeafManager.setRequestUrl(widget.requestUrl ?? '');
+  }
+
+  void _settingOriginUrl() {
+    _signForDeafManager.setOriginUrl(widget.originUrl ?? '');
   }
 
   void _initializeVideoPlayer(String signVideoUrl) {
@@ -106,9 +107,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
 
   @override
   Widget build(BuildContext context) {
-    if (SignForDeafManager().requestKey == null ||
-        SignForDeafManager().requestUrl == null ||
-        widget.child == null) {
+    if (SignForDeafManager().requestKey == null || SignForDeafManager().requestUrl == null || widget.child == null) {
       if (kDebugMode) {
         throw Exception('Please enter the request key or request url');
       }
@@ -124,9 +123,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
   AdaptiveTextSelectionToolbar _defaultContextMenuBuilder(
       BuildContext context, SelectableRegionState selectableRegionState) {
     return AdaptiveTextSelectionToolbar.buttonItems(
-      anchors: TextSelectionToolbarAnchors(
-          primaryAnchor:
-              selectableRegionState.contextMenuAnchors.primaryAnchor),
+      anchors: TextSelectionToolbarAnchors(primaryAnchor: selectableRegionState.contextMenuAnchors.primaryAnchor),
       buttonItems: [
         ContextMenuButtonItem(
           onPressed: () {
@@ -156,9 +153,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
               },
             );
           },
-          label: currentLocale == const Locale('tr')
-              ? 'İşaret Dili'
-              : 'Sign Language',
+          label: currentLocale == const Locale('tr') ? 'İşaret Dili' : 'Sign Language',
         ),
         for (final item in selectableRegionState.contextMenuButtonItems) item,
       ],
@@ -285,9 +280,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
                       : 'Translation is not available at the moment. Please try again later.',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      color: Color.fromRGBO(255, 255, 255, 1),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
+                      color: Color.fromRGBO(255, 255, 255, 1), fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             )
@@ -339,9 +332,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea>
                 ),
               ),
               child: SignPanel(
-                businessName: currentLocale == const Locale('tr')
-                    ? 'Engelsiz Çeviri'
-                    : 'SignForDeaf',
+                businessName: currentLocale == const Locale('tr') ? 'Engelsiz Çeviri' : 'SignForDeaf',
                 controller: _videoController,
                 onClose: () {
                   setState(() {

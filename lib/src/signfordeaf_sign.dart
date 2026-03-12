@@ -23,19 +23,16 @@ class SignForDeaf extends StatefulWidget {
   /// The [requestKey] must be entered for it to work.
   final String requestKey;
   final String requestUrl;
+  final String? originUrl;
   final Widget? child;
   const SignForDeaf(
-      {super.key,
-      required this.requestKey,
-      required this.requestUrl,
-      required this.child});
+      {super.key, required this.requestKey, required this.requestUrl, this.originUrl, required this.child});
 
   @override
   State<SignForDeaf> createState() => _SignForDeafState();
 }
 
-class _SignForDeafState extends State<SignForDeaf>
-    with SingleTickerProviderStateMixin {
+class _SignForDeafState extends State<SignForDeaf> with SingleTickerProviderStateMixin {
   Locale currentLocale = const Locale('tr');
   final SignForDeafManager _signForDeafManager = SignForDeafManager();
   late VideoPlayerController _videoController;
@@ -52,6 +49,7 @@ class _SignForDeafState extends State<SignForDeaf>
   void initState() {
     _signForDeafManager.setRequestKey(widget.requestKey);
     _signForDeafManager.setRequestUrl(widget.requestUrl);
+    _signForDeafManager.setOriginUrl(widget.originUrl ?? widget.requestUrl);
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -110,9 +108,7 @@ class _SignForDeafState extends State<SignForDeaf>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.requestKey.isEmpty ||
-        widget.requestUrl.isEmpty ||
-        widget.child == null) {
+    if (widget.requestKey.isEmpty || widget.requestUrl.isEmpty || widget.child == null) {
       if (kDebugMode) {
         throw Exception('Please enter the request key or request url');
       }
@@ -128,9 +124,7 @@ class _SignForDeafState extends State<SignForDeaf>
   AdaptiveTextSelectionToolbar _defaultContextMenuBuilder(
       BuildContext context, SelectableRegionState selectableRegionState) {
     return AdaptiveTextSelectionToolbar.buttonItems(
-      anchors: TextSelectionToolbarAnchors(
-          primaryAnchor:
-              selectableRegionState.contextMenuAnchors.primaryAnchor),
+      anchors: TextSelectionToolbarAnchors(primaryAnchor: selectableRegionState.contextMenuAnchors.primaryAnchor),
       buttonItems: [
         ContextMenuButtonItem(
           onPressed: () {
@@ -160,9 +154,7 @@ class _SignForDeafState extends State<SignForDeaf>
               },
             );
           },
-          label: currentLocale == const Locale('tr')
-              ? 'İşaret Dili'
-              : 'Sign Language',
+          label: currentLocale == const Locale('tr') ? 'İşaret Dili' : 'Sign Language',
         ),
         for (final item in selectableRegionState.contextMenuButtonItems) item,
       ],
@@ -289,9 +281,7 @@ class _SignForDeafState extends State<SignForDeaf>
                       : 'Translation is not available at the moment. Please try again later.',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      color: Color.fromRGBO(255, 255, 255, 1),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
+                      color: Color.fromRGBO(255, 255, 255, 1), fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             )
@@ -343,9 +333,7 @@ class _SignForDeafState extends State<SignForDeaf>
                 ),
               ),
               child: SignPanel(
-                businessName: currentLocale == const Locale('tr')
-                    ? 'Engelsiz Çeviri'
-                    : 'SignForDeaf',
+                businessName: currentLocale == const Locale('tr') ? 'Engelsiz Çeviri' : 'SignForDeaf',
                 controller: _videoController,
                 text: _selectedText?.plainText ?? '',
                 onClose: () {

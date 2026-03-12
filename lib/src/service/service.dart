@@ -12,6 +12,7 @@ class ApiServices {
       baseUrl: SignForDeafManager().requestUrl ?? '',
       headers: {
         'Content-Type': 'application/json',
+        'Origin': SignForDeafManager().originUrl ?? '',
       },
     ),
   );

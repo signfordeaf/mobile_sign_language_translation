@@ -10,6 +10,7 @@ class SignForDeafManager {
   /// The private constructor that initializes the package.
   String? _requestKey;
   String? _requestUrl;
+  String? _originUrl;
 
   /// Special configurator.
   SignForDeafManager._internal();
@@ -22,6 +23,7 @@ class SignForDeafManager {
   bool get isSignForDeafOpen => _isSignOpen;
   String? get requestKey => _requestKey;
   String? get requestUrl => _requestUrl;
+  String? get originUrl => _originUrl;
 
   /// The function of initializing (opening) the package. Optionally, it provides the user with a return value and prints the status with debugPrint.
   T? active<T>({T Function()? onOpen}) {
@@ -61,5 +63,10 @@ class SignForDeafManager {
   /// The function that set the request url.
   void setRequestUrl(String requestUrl) {
     _requestUrl = requestUrl;
+  }
+
+  /// The function that set the origin url.
+  void setOriginUrl(String originUrl) {
+    _originUrl = originUrl;
   }
 }
