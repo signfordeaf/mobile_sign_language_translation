@@ -1,10 +1,10 @@
 name: mobile_sign_language_translation
 description: "Mobile Sign Language Translation Flutter Package."
-version: 1.0.2
+version: 1.0.3
 email: hello@signfordeaf.com
 homepage: https://github.com/signfordeaf/mobile_sign_language_translation
 repository: https://github.com/signfordeaf/mobile_sign_language_translation
-topics: 
+topics:
   - signlanguage
   - translation
   - flutter
@@ -22,7 +22,6 @@ dependencies:
   flutter_animate: ^4.5.2
   flick_video_player: ^0.9.0
   fading_edge_scrollview: ^4.1.1
-  
 
 dev_dependencies:
   flutter_test:
@@ -34,11 +33,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   uses-material-design: true
-    
+
   assets:
-      - images/
+    - images/
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/to/asset-from-package
