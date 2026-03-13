@@ -48,9 +48,7 @@ class _SignPanelState extends State<SignPanel> {
                   ),
                   RichText(
                     text: TextSpan(
-                      text: widget.businessName != null
-                          ? widget.businessName!
-                          : 'SignForDeaf',
+                      text: widget.businessName != null ? widget.businessName! : 'SignForDeaf',
                       style: const TextStyle(
                         fontSize: 18.0,
                         color: Color.fromARGB(255, 103, 58, 183),
@@ -73,8 +71,7 @@ class _SignPanelState extends State<SignPanel> {
                   ),
                 ],
               ),
-              const Spacer(),
-              Container(
+              Expanded(
                 child: widget.controller.value.isInitialized
                     ? AspectRatio(
                         aspectRatio: widget.controller.value.aspectRatio,

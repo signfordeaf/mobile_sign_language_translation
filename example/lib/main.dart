@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
         return SignForDeaf(
           requestKey: 'YOUR_API_KEY',
           requestUrl: 'YOUR_API_URL',
+          originUrl: 'YOUR_ORIGIN_URL',
           child: child!,
         );
       },
@@ -60,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SignForDeafArea(
               requestKey: 'YOUR_API_KEY',
               requestUrl: 'YOUR_API_URL',
+              originUrl: 'YOUR_ORIGIN_URL',
               child: Text(
                 'You have pushed the button this many times:',
               ),

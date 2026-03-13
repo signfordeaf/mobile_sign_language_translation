@@ -7,15 +7,15 @@ import 'package:mobile_sign_language_translation/src/service/http_exception.dart
 class ApiServices {
   CancelToken cancelToken = CancelToken();
 
-  var dio = Dio(
-    BaseOptions(
-      baseUrl: SignForDeafManager().requestUrl ?? '',
-      headers: {
-        'Content-Type': 'application/json',
-        'Origin': SignForDeafManager().originUrl ?? '',
-      },
-    ),
-  );
+  Dio get dio => Dio(
+        BaseOptions(
+          baseUrl: SignForDeafManager().requestUrl ?? '',
+          headers: {
+            //'Content-Type': 'application/json',
+            'origin': SignForDeafManager().originUrl ?? '',
+          },
+        ),
+      );
 
   Future<SignModel> getSignVideo({
     required String text,
@@ -26,6 +26,7 @@ class ApiServices {
       'fdid': '16',
       'tid': '23',
       'language': '1',
+      'url': SignForDeafManager().originUrl ?? '',
     };
     try {
       var response = await dio.request(

@@ -165,6 +165,7 @@ class _SignForDeafAreaState extends State<SignForDeafArea> with SingleTickerProv
     return Overlay(
       initialEntries: [
         OverlayEntry(
+          canSizeOverlay: true,
           builder: (context) {
             return SelectionArea(
               onSelectionChanged: (value) => _selectedText = value,
