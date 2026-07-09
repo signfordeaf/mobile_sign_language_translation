@@ -36,6 +36,12 @@ class _SignForDeafState extends State<SignForDeaf> with SingleTickerProviderStat
   Locale currentLocale = const Locale('tr');
   final SignForDeafManager _signForDeafManager = SignForDeafManager();
   late VideoPlayerController _videoController;
+
+  /// `_videoController` yalnızca kullanıcı bir çeviri tetiklediğinde
+  /// ([_initializeVideoPlayer]) atanır. Çeviri yapılmadan widget dispose
+  /// edilirse, atanmamış `late` alana `dispose()` içinde erişmek
+  /// `LateInitializationError` fırlatır; bu bayrakla o durumu ayırt ederiz.
+  bool _isVideoControllerInitialized = false;
   SelectedContent? _selectedText;
   String signVideoUrl = '';
   int videoPlayerErrorCount = 0;
@@ -78,7 +84,9 @@ class _SignForDeafState extends State<SignForDeaf> with SingleTickerProviderStat
     try {
       _videoController = VideoPlayerController.networkUrl(
         Uri.parse(signVideoUrl.replaceFirst('http:', 'https:')),
-      )..addListener(() {
+      );
+      _isVideoControllerInitialized = true;
+      _videoController.addListener(() {
           if (_videoController.value.hasError) {
             if (videoPlayerErrorCount <= 3) {
               videoPlayerErrorCount++;
@@ -352,7 +360,9 @@ class _SignForDeafState extends State<SignForDeaf> with SingleTickerProviderStat
   @override
   void dispose() {
     _animationController.dispose();
-    _videoController.dispose();
+    if (_isVideoControllerInitialized) {
+      _videoController.dispose();
+    }
     super.dispose();
   }
 }

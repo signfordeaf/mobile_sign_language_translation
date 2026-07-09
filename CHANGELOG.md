@@ -1,3 +1,7 @@
+## 1.0.5
+
+- Fixed `LateInitializationError` thrown from `SignForDeaf.dispose` when the widget was disposed before a translation was ever requested (the `_videoController` late field was never assigned). Disposal now guards on an initialization flag.
+
 ## 1.0.3
 
 - Added iOS and macOS Podfile configuration for CocoaPods dependency management
