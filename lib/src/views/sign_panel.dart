@@ -7,12 +7,24 @@ class SignPanel extends StatefulWidget {
   final String? businessName;
   final String? text;
   final VoidCallback onClose;
+  final Color primaryColor;
+  final Color textColor;
+  final String logoAsset;
+  final String? videoPlayerLabel;
+  final String? closeButtonLabel;
+  final String? bottomSheetHint;
   const SignPanel({
     super.key,
     this.businessName,
     this.text,
     required this.controller,
     required this.onClose,
+    this.primaryColor = const Color(0xFF6750A4),
+    this.textColor = const Color(0xFF6750A4),
+    this.logoAsset = 'images/logo_kafa.png',
+    this.videoPlayerLabel,
+    this.closeButtonLabel,
+    this.bottomSheetHint,
   });
 
   @override
@@ -27,12 +39,18 @@ class _SignPanelState extends State<SignPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
+    // Bottom safe area (home indicator, etc.): since the panel sits at the very
+    // bottom of the screen, we push the content up by this much so it is not clipped.
+    final bottomSafe = MediaQuery.of(context).padding.bottom;
+    return Semantics(
+      container: true,
+      hint: widget.bottomSheetHint,
+      child: ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       child: Container(
         color: const Color.fromARGB(255, 255, 255, 255),
         child: Padding(
-          padding: const EdgeInsets.all(8.0) + const EdgeInsets.only(top: 10.0),
+          padding: EdgeInsets.fromLTRB(8, 18, 8, 8 + bottomSafe),
           child: Column(
             children: [
               Row(
@@ -41,7 +59,7 @@ class _SignPanelState extends State<SignPanel> {
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Image.asset(
-                      'images/logo_kafa.png',
+                      widget.logoAsset,
                       scale: 4,
                       package: 'mobile_sign_language_translation',
                     ),
@@ -49,23 +67,27 @@ class _SignPanelState extends State<SignPanel> {
                   RichText(
                     text: TextSpan(
                       text: widget.businessName != null ? widget.businessName! : 'SignForDeaf',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18.0,
-                        color: Color.fromARGB(255, 103, 58, 183),
+                        color: widget.primaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      widget.controller.pause();
-                      widget.onClose();
-                    },
-                    child: const SizedBox(
-                      width: 50,
-                      child: Icon(
-                        Icons.close,
-                        color: Color.fromARGB(255, 103, 58, 183),
+                  Semantics(
+                    button: true,
+                    label: widget.closeButtonLabel,
+                    child: GestureDetector(
+                      onTap: () {
+                        widget.controller.pause();
+                        widget.onClose();
+                      },
+                      child: SizedBox(
+                        width: 50,
+                        child: Icon(
+                          Icons.close,
+                          color: widget.primaryColor,
+                        ),
                       ),
                     ),
                   ),
@@ -73,9 +95,12 @@ class _SignPanelState extends State<SignPanel> {
               ),
               Expanded(
                 child: widget.controller.value.isInitialized
-                    ? AspectRatio(
-                        aspectRatio: widget.controller.value.aspectRatio,
-                        child: VideoPlayer(widget.controller),
+                    ? Semantics(
+                        label: widget.videoPlayerLabel,
+                        child: AspectRatio(
+                          aspectRatio: widget.controller.value.aspectRatio,
+                          child: VideoPlayer(widget.controller),
+                        ),
                       )
                     : const SizedBox.shrink(),
               ),
@@ -83,6 +108,7 @@ class _SignPanelState extends State<SignPanel> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
@@ -94,19 +120,16 @@ class _SignPanelState extends State<SignPanel> {
       alignment: Alignment.center,
       child: MarqueeText(
         text: widget.text ?? '',
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 15.0,
-          color: Color.fromARGB(255, 103, 58, 183),
+          color: widget.textColor,
           fontWeight: FontWeight.bold,
         ),
-        scrollSpeed: 25,
+        scrollSpeed: 55,
       ),
     );
   }
 
-  @override
-  void dispose() {
-    widget.controller.dispose();
-    super.dispose();
-  }
+  // Note: `controller` (VideoPlayerController) is owned by SignForDeafController
+  // and disposed there; it is not disposed again here.
 }

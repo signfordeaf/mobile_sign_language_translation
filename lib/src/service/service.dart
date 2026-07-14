@@ -7,11 +7,20 @@ import 'package:mobile_sign_language_translation/src/service/http_exception.dart
 class ApiServices {
   CancelToken cancelToken = CancelToken();
 
+  /// While the server is generating the video it returns `state: false`; the
+  /// same GET is repeated until it is ready. Bounded to at most [_maxRetries]
+  /// attempts, with [_retryDelay] between them.
+  static const int _maxRetries = 30;
+  static const Duration _retryDelay = Duration(milliseconds: 1000);
+
   Dio get dio => Dio(
         BaseOptions(
           baseUrl: SignForDeafManager().requestUrl ?? '',
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+          sendTimeout: const Duration(seconds: 30),
           headers: {
-            //'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'origin': SignForDeafManager().originUrl ?? '',
           },
         ),
@@ -19,13 +28,14 @@ class ApiServices {
 
   Future<SignModel> getSignVideo({
     required String text,
+    int retryCount = 0,
   }) async {
     var parameter = {
       's': text,
       'rk': SignForDeafManager().requestKey,
-      'fdid': '16',
-      'tid': '23',
-      'language': '1',
+      'fdid': SignForDeafManager().fdid,
+      'tid': SignForDeafManager().tid,
+      'language': SignForDeafManager().language.apiCode,
       'url': SignForDeafManager().originUrl ?? '',
     };
     try {
@@ -42,9 +52,12 @@ class ApiServices {
           final data = SignModel.fromJson(response.data);
           if (data.state == true) {
             return data;
+          } else if (retryCount < _maxRetries) {
+            await Future.delayed(_retryDelay);
+            return await getSignVideo(text: text, retryCount: retryCount + 1);
           } else {
-            await Future.delayed(const Duration(milliseconds: 1000));
-            return await getSignVideo(text: text);
+            // Timed out: the video never became ready.
+            return SignModel();
           }
         case 400:
           return handleError(BadRequestException());

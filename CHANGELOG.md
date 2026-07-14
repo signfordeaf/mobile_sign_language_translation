@@ -1,3 +1,26 @@
+## 1.1.0
+
+- Major feature update — a full configuration and interaction layer:
+  - **`SignForDeafInit`** — a single, top-level root initializer (same ergonomics as `ScreenUtilInit`): wrap once with `builder: (context, child) => MaterialApp(...)` and the SDK is active on every screen. It sits above `MaterialApp`, so it is **router-agnostic** — works identically with `MaterialApp`, `MaterialApp.router`, go_router, auto_route and nested navigators, and can be nested with `ScreenUtilInit`. The classic `MaterialApp.builder` + `SignForDeaf` pattern remains supported.
+  - **Floating button + tap-to-translate**: a draggable, edge-sticky logo button toggles a "tap-to-translate" mode; while active, a single tap on any text translates it instantly. The button peeks off-screen when idle and shows a localized, persisted onboarding hint (`SignForDeafFloatingButton`, `FloatingButtonConfig`).
+  - **Tap capture in pure Dart**: tapping is resolved by hit-testing the render tree for the `RenderParagraph` under the finger (`TapToTranslateDetector`), with an opt-in `SignForDeafText` wrapper as a reliable fallback. (Flutter draws to a single surface, so there are no per-widget native text views.)
+  - **Config object + controller**: new `SignForDeafConfig` (apiKey, apiUrl, language, fdid, tid, theme, floatingButton) and `SignForDeafController` (a `ChangeNotifier` exposing `state`, `enable/disable/toggleTapToTranslate/translate/dismissPanel/cancelTranslation`), shared via `SignForDeafScope` / `SignForDeaf.of(context)`.
+  - **Theming** (`SignForDeafTheme`: primaryColor/textColor — applied to the panel header/close/text, floating button, and loading spinner), **localization** (tr/en/ar; de/fr/es coming soon), **programmatic `translate(text)`**, and a **lifecycle event stream** (`SignForDeafEvent`).
+  - **Accessibility personalization** (`SignForDeafAccessibility`): `announceOnOpen` / `announceOnClose` (screen-reader announcements on panel open/close), plus `videoPlayerLabel`, `closeButtonLabel`, `bottomSheetHint` semantics on the panel.
+  - **Optional persistence** via `SignForDeafStorage` (in-memory or `shared_preferences`).
+  - Language is now mapped to the API code (tr=1 … ar=6) instead of hard-coded `1`.
+  - Translation retry is now bounded (30 attempts, 1s apart) with 30s network timeouts, instead of unbounded recursion.
+- **Behavior change — no more always-on text selection.** The package no longer wraps your app in a `SelectionArea` that forces every `Text` to be selectable (it disrupted normal scrolling/UX). The app now behaves 100% natively when the SDK is off.
+  - **On/off gating.** The SDK is **disabled by default**. Turn it on via `SignForDeaf.of(context).enable()` / `.disable()` (wire it to a settings switch) or `SignForDeafConfig(autoEnable: true)` / the `autoEnable` prop (e.g. based on user profile). While off: no floating button, no tap-to-translate, no menu item.
+  - **Sign-language menu is now opt-in per selectable widget.** For text your app already makes selectable (`TextField`, `SelectableText`), add `contextMenuBuilder: SignForDeaf.of(context).contextMenuBuilder` — the "İşaret Dili" item then appears in that native selection menu, but only while the SDK is enabled. (Flutter has no global selection-menu hook, so this is per-widget.)
+- **Sensitive-data protection** — personal data is never sent to the translation server.
+  - New `SignForDeafSensitive` widget: wrap any text-bearing subtree; its text stays visible, but requesting a sign-language translation for it is blocked — no request is sent.
+  - Automatic PII safety net: even without marking, selected text that matches a T.C. Kimlik No (checksum-validated), credit card (Luhn-validated), Turkish IBAN, e-mail, or GSM phone number is blocked before any request leaves the device.
+  - When blocked, a short warning is shown instead of calling `/Translate`; the selected text never reaches the server or its access logs.
+  - Registry API on `SignForDeafManager` (`registerSensitive` / `unregisterSensitive` / `isRegisteredSensitive`).
+- Preserved: the `SignForDeaf` / `SignForDeafArea` / `SignForDeafBody` constructors (new params are optional).
+- Fixed the same `LateInitializationError` on `dispose` for `SignForDeafArea` / `SignForDeafBody` that 1.0.5 fixed for `SignForDeaf` (the widgets now delegate to a shared host).
+
 ## 1.0.5
 
 - Fixed `LateInitializationError` thrown from `SignForDeaf.dispose` when the widget was disposed before a translation was ever requested (the `_videoController` late field was never assigned). Disposal now guards on an initialization flag.
