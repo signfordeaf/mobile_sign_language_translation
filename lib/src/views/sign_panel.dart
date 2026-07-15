@@ -62,6 +62,7 @@ class _SignPanelState extends State<SignPanel> {
                       widget.logoAsset,
                       scale: 4,
                       package: 'mobile_sign_language_translation',
+                      color: widget.primaryColor,
                     ),
                   ),
                   RichText(

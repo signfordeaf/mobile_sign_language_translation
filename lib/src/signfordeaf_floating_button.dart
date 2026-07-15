@@ -169,13 +169,21 @@ class _SignForDeafFloatingButtonState extends State<SignForDeafFloatingButton>
     setState(() {
       _isPeeked = false;
       _opacity = 1;
-      _restingSide = null; // full circle while dragging
+      // NB: keep the current resting side here so a plain tap does not flash the
+      // full-circle shape. We only switch to a circle once a real drag begins
+      // (see _onPointerMove).
     });
   }
 
   void _onPointerMove(PointerMoveEvent details) {
     _dragDistance += details.delta.distance;
-    setState(() => _pos += details.delta);
+    setState(() {
+      _pos += details.delta;
+      // Full circle only while actually dragging, not on a simple tap.
+      if (_restingSide != null && _dragDistance > _tapThreshold) {
+        _restingSide = null;
+      }
+    });
   }
 
   void _onPointerUp(PointerUpEvent _) {
@@ -220,11 +228,21 @@ class _SignForDeafFloatingButtonState extends State<SignForDeafFloatingButton>
   Widget build(BuildContext context) {
     final cfg = widget.config;
     final primary = widget.primaryColor;
-    final bg = cfg.backgroundColor ?? Colors.white;
+
+    // The SDK sits above the host MaterialApp, so Theme.of(context) is not the
+    // app's theme; platformBrightness is the reliable ambient signal. We derive
+    // brightness-aware DEFAULTS so the closed (OFF) and open (ON) states always
+    // contrast — OFF stays outlined, ON stays solid. Any color the host set on
+    // FloatingButtonConfig still wins (each default is behind `?? cfg.<field>`).
+    final isDark =
+        MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    final bg =
+        cfg.backgroundColor ?? (isDark ? const Color(0xFF2A2A2A) : Colors.white);
     final activeBg = cfg.activeBackgroundColor ?? primary;
-    final iconColor = cfg.iconColor ?? primary;
-    final activeIconColor = cfg.activeIconColor ?? Colors.white;
-    final borderColor = cfg.borderColor ?? primary;
+    final iconColor = cfg.iconColor ?? (isDark ? Colors.white : primary);
+    final activeIconColor =
+        cfg.activeIconColor ?? (isDark ? Colors.black : Colors.white);
+    final borderColor = cfg.borderColor ?? (isDark ? Colors.white : primary);
 
     final button = Opacity(
       opacity: _opacity,
@@ -268,8 +286,17 @@ class _SignForDeafFloatingButtonState extends State<SignForDeafFloatingButton>
 
     final showHintBubble = widget.active && widget.showHint && !_isPeeked;
 
+    // The hint bubble is a fixed-width box laid out in this Column. Anchoring
+    // only by `left` makes it grow rightward, so when the button is docked to
+    // the right edge the bubble (and, via crossAxisAlignment.end, the button
+    // itself) spills off-screen. When right-docked, anchor the right edge
+    // instead so the bubble grows leftward into visible space.
+    final screenW = MediaQuery.sizeOf(context).width;
+    final rightDocked = _restingSide == _Side.right;
+
     return Positioned(
-      left: _pos.dx,
+      left: rightDocked ? null : _pos.dx,
+      right: rightDocked ? (screenW - _pos.dx - _size) : null,
       top: _pos.dy,
       child: Column(
         mainAxisSize: MainAxisSize.min,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart' show DefaultCupertinoLocalizations;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -193,12 +194,25 @@ class _SignForDeafHostState extends State<SignForDeafHost>
 
     return SignForDeafScope(
       controller: _controller,
-      child: Overlay(
-        initialEntries: [
-          OverlayEntry(canSizeOverlay: true, builder: (_) => _contentLayer(child)),
-          OverlayEntry(builder: (_) => _floatingButtonLayer()),
-          OverlayEntry(builder: (_) => _statusLayer(context)),
+      // The SDK mounts this Overlay above the host MaterialApp, so it has no
+      // Localizations ancestor. Any OverlayEntry the framework inserts into the
+      // nearest Overlay — e.g. a TextField's SystemContextMenu selection toolbar
+      // — would then fail with "No WidgetsLocalizations found". Provide the
+      // framework's default delegates so every entry can resolve localizations.
+      child: Localizations(
+        locale: _currentLocale,
+        delegates: const [
+          DefaultWidgetsLocalizations.delegate,
+          DefaultMaterialLocalizations.delegate,
+          DefaultCupertinoLocalizations.delegate,
         ],
+        child: Overlay(
+          initialEntries: [
+            OverlayEntry(canSizeOverlay: true, builder: (_) => _contentLayer(child)),
+            OverlayEntry(builder: (_) => _floatingButtonLayer()),
+            OverlayEntry(builder: (_) => _statusLayer(context)),
+          ],
+        ),
       ),
     );
   }
@@ -304,7 +318,9 @@ class _SignForDeafHostState extends State<SignForDeafHost>
           alignment: Alignment.center,
           children: [
             Image.asset('images/${widget.logoAsset}.png',
-                scale: 3, package: 'mobile_sign_language_translation'),
+                scale: 3,
+                package: 'mobile_sign_language_translation',
+                color: _primary),
             SizedBox(
               width: MediaQuery.of(context).size.height * 0.1,
               height: MediaQuery.of(context).size.height * 0.1,
@@ -325,7 +341,9 @@ class _SignForDeafHostState extends State<SignForDeafHost>
           alignment: Alignment.center,
           children: [
             Image.asset('images/${widget.logoAsset}.png',
-                scale: 1.5, package: 'mobile_sign_language_translation'),
+                scale: 1.5,
+                package: 'mobile_sign_language_translation',
+                color: _primary),
             Transform.translate(
               offset: Offset(0, MediaQuery.of(context).size.height * 0.1),
               child: SizedBox(

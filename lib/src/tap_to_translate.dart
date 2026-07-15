@@ -11,9 +11,11 @@ import 'package:flutter/widgets.dart';
 /// plain text of the first [RenderParagraph] at the tapped point is read.
 ///
 /// Only this detector's subtree is scanned; the floating button / hint bubble
-/// above is never captured. A translucent [Listener] is used so underlying
-/// scrolling/tapping is not disrupted; to distinguish scrolling from a tap, the
-/// finger's up/down movement is bounded by [_tapSlop].
+/// above is never captured. While enabled, a top-most translucent tap-catcher
+/// is laid over the content: it *wins* the tap gesture (so the underlying app
+/// element does not also react — e.g. no accidental navigation while a
+/// translation loads), yet it only owns taps, so scrolling still falls through
+/// to the content underneath.
 class TapToTranslateDetector extends StatefulWidget {
   final bool enabled;
   final ValueChanged<String> onText;
@@ -30,25 +32,11 @@ class TapToTranslateDetector extends StatefulWidget {
   State<TapToTranslateDetector> createState() => _TapToTranslateDetectorState();
 }
 
-const double _tapSlop = 12;
-
 class _TapToTranslateDetectorState extends State<TapToTranslateDetector> {
-  Offset? _downPosition;
-
-  void _onPointerDown(PointerDownEvent event) {
-    _downPosition = event.position;
-  }
-
-  void _onPointerUp(PointerUpEvent event) {
-    final down = _downPosition;
-    _downPosition = null;
-    if (down == null) return;
-    // A tap rather than a scroll?
-    if ((event.position - down).distance > _tapSlop) return;
-
+  void _handleTap(Offset globalPosition) {
     final root = context.findRenderObject();
     if (root == null) return;
-    final text = _textAt(root, event.position);
+    final text = _textAt(root, globalPosition);
     if (text != null && text.trim().isNotEmpty) {
       widget.onText(text.trim());
     }
@@ -87,11 +75,22 @@ class _TapToTranslateDetectorState extends State<TapToTranslateDetector> {
   @override
   Widget build(BuildContext context) {
     if (!widget.enabled) return widget.child;
-    return Listener(
-      behavior: HitTestBehavior.translucent,
-      onPointerDown: _onPointerDown,
-      onPointerUp: _onPointerUp,
-      child: widget.child,
+    // The tap-catcher is the top child of this Stack, so it is hit-tested first
+    // and wins the tap gesture over any app element below it (the app therefore
+    // does not react to the tap). It is translucent and only recognizes taps,
+    // so drags/scrolls fall through to the content underneath. Because the
+    // catcher shares this Stack with [widget.child], `context.findRenderObject`
+    // still reaches the app subtree for text hit-testing in [_handleTap].
+    return Stack(
+      children: [
+        widget.child,
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTapUp: (details) => _handleTap(details.globalPosition),
+          ),
+        ),
+      ],
     );
   }
 }

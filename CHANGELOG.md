@@ -1,3 +1,12 @@
+## 1.1.1
+
+- **Localizations crash fix.** The SDK mounts its own `Overlay` above the host `MaterialApp`; a `TextField`'s `SystemContextMenu` selection toolbar attaching to that overlay could throw `No WidgetsLocalizations found`. The overlay is now wrapped in a `Localizations` with the framework's default widgets/material/cupertino delegates.
+- **Dark-mode aware floating button.** The floating button now derives contrast-safe defaults from the ambient `platformBrightness`, so its open (solid) and closed (outlined) states stay distinguishable — and its logo tint stays visible — in both light and dark themes. Explicit `FloatingButtonConfig` colors still override.
+- **Themed logo everywhere.** The panel header, loading and error/message views now tint the logo with `primaryColor` (previously only the floating button was themed).
+- **Onboarding hint no longer overflows.** When the button is docked to the right edge, the "tap to translate" hint bubble now anchors to the right edge and grows leftward instead of pushing the button off-screen.
+- **Floating button shape fix.** The button only becomes a full circle while it is actually being dragged; a plain tap keeps its docked half-pill shape (no more circle flash).
+- **Tap in translate mode no longer leaks to the app.** While tap-to-translate is active, a tap on interactive content (link/button) is captured for translation only and no longer also triggers the app's own handler (e.g. accidental navigation). Scrolling still works.
+
 ## 1.1.0
 
 - Major feature update — a full configuration and interaction layer:
