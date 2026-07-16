@@ -1,3 +1,7 @@
+## 1.1.2
+
+- **Navigation reset fix.** Activating tap-to-translate mode no longer reparents the host app. The `TapToTranslateDetector` previously returned the app directly when disabled and moved it inside a `Stack` when enabled; flipping that flag reparented the host `MaterialApp`, so Flutter rebuilt it from scratch — recreating the `Navigator`, resetting the route stack to the initial route, and re-running the app's bootstrap (a visible "jump back" the moment the floating button was pressed). The detector now keeps a single `Stack` mounted in both states with the app fixed at slot 0, only adding/removing the translucent tap-catcher, so the host `Navigator`/route stack and app state are preserved across every toggle.
+
 ## 1.1.1
 
 - **Localizations crash fix.** The SDK mounts its own `Overlay` above the host `MaterialApp`; a `TextField`'s `SystemContextMenu` selection toolbar attaching to that overlay could throw `No WidgetsLocalizations found`. The overlay is now wrapped in a `Localizations` with the framework's default widgets/material/cupertino delegates.

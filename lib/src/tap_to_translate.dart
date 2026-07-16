@@ -74,7 +74,13 @@ class _TapToTranslateDetectorState extends State<TapToTranslateDetector> {
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.enabled) return widget.child;
+    // [widget.child] is the host's entire app (MaterialApp/Navigator). It must
+    // ALWAYS sit at the same position in the element tree, otherwise toggling
+    // `enabled` reparents it and Flutter rebuilds the whole app from scratch —
+    // recreating the Navigator and resetting the route stack (and re-running the
+    // app's bootstrap). So we keep this Stack mounted in both states, with the
+    // child fixed at slot 0, and only add/remove the top tap-catcher.
+    //
     // The tap-catcher is the top child of this Stack, so it is hit-tested first
     // and wins the tap gesture over any app element below it (the app therefore
     // does not react to the tap). It is translucent and only recognizes taps,
@@ -82,14 +88,16 @@ class _TapToTranslateDetectorState extends State<TapToTranslateDetector> {
     // catcher shares this Stack with [widget.child], `context.findRenderObject`
     // still reaches the app subtree for text hit-testing in [_handleTap].
     return Stack(
+      fit: StackFit.expand,
       children: [
         widget.child,
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTapUp: (details) => _handleTap(details.globalPosition),
+        if (widget.enabled)
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTapUp: (details) => _handleTap(details.globalPosition),
+            ),
           ),
-        ),
       ],
     );
   }
